@@ -1,32 +1,41 @@
 const Fridge = require('./fridge');
 const Core = require('./core');
 
+const minStock = 4;
+
 module.exports = class Ctrl {
     constructor() {
         this.fridge  = new Fridge();
         this.core = new Core();
     }
 
-    storePurchase() {
-        //guarda una lista de items comprados.
-        //activa logica del core
-        //core tiene la logica del agente que aprende.
+    storePurchase(items) {
+        items.map((item)=> {
+            this.fridge.addItem(item.type, item.amount);
+            if (this.core.checkIfPredicted(item)) {
+                this.core.improvePrediction(item);
+            } else {
+                this.core.correctPrediction(item);
+            }
+        });
     }
 
     requestPurchaseList() {
-        //solicita al core una lista de items  que espera comprar
+        let consumed = this.fridge.purge();
+        this.core.correctPrediction(consumed);
+        return this.core.getPrediction();
     }
 
-    consume() {
-        
+    consume(item, amountConsumed) {
+        let remains = this.fridge.consumeItem(item, amountConsumed);
+        this.core.updateUsage(item, amountConsumed);
+        if (remains < minStock) {
+            this.alertLowStock(item);
+        }
     }
 
-    configureMinimumStock() {
-
-    }
-
-    alertLowStock() {
-
+    alertLowStock(item) {
+        console.warn(`${item.type} se encuentra por debajo del stock minimo.`)
     }
 
 
@@ -38,9 +47,11 @@ module.exports = class Ctrl {
 
     // }
 
-    activateCleaningProcess() {
-        //core va a tomar  todos los elementos eliminados 
-        //se eliminan de la heladera, y se corrije prediccion
+    activateCleaningProcess(removedItems) {
+        removedItems.map((item) => {
+            let remains = this.fridge.eliminateItem(item.type);
+            this.core.correctOnCleaning(item);
+        })
     }
 
 

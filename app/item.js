@@ -1,11 +1,8 @@
 module.exports = class Item {
-    constructor(type, amount) {
+    constructor(type, amount, expiry) {
         this.type = type;
         this.amount = amount;
-        /*
-        Falta agregar fecha de expiracion. podria tomarse de una tabla
-        como informacion inicial -> correccion a partir de cleaning cycle.
-        */
+        this.expiry = expiry;
     }
 
     consume(amount) {
@@ -16,7 +13,8 @@ module.exports = class Item {
         this.amount = this.amount + amount;
     }
 
-    purge() {
-        //elimina elementos de cantidad 0
+    isExpired() {
+        let today = new Date();
+        return today > this.expiry;
     }
 }
