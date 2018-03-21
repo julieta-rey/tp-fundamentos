@@ -26,7 +26,7 @@ module.exports = class Fridge {
         let remains;
         this.contents = this.contents.map((item) => {
             if(itemConsumed.type = item.type) {
-                item.amount = item.amount - amountConsumed;
+                item.consume(amountConsumed);
                 remains = item.amount;
             }
             return item;

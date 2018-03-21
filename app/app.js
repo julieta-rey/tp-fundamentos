@@ -18,11 +18,6 @@ app.on('cleaning', (removedItems) => {
 
 app.on('consume',(item, amount) => {
     ctrl.consume(item, amount);
-    ctrl.verifyLevels(item);
-})
-
-app.on('newDay', () => {
-    ctrl.verifyExpiries();
 })
 
 app.on('predict', () => {

@@ -22,13 +22,11 @@ module.exports = class Ctrl {
 
     requestPurchaseList() {
         let consumed = this.fridge.purge();
-        this.core.correctPrediction(consumed);
-        return this.core.getPrediction();
+        return this.core.getPrediction(consumed);
     }
 
     consume(item, amountConsumed) {
         let remains = this.fridge.consumeItem(item, amountConsumed);
-        this.core.updateUsage(item, amountConsumed);
         if (remains < minStock) {
             this.alertLowStock(item);
         }
@@ -38,19 +36,10 @@ module.exports = class Ctrl {
         console.warn(`${item.type} se encuentra por debajo del stock minimo.`)
     }
 
-
-    // alertBeforeExpirationDate() {
-
-    // }
-
-    // alertOnExpirationDate() {
-
-    // }
-
     activateCleaningProcess(removedItems) {
         removedItems.map((item) => {
             let remains = this.fridge.eliminateItem(item.type);
-            this.core.correctOnCleaning(item);
+            this.core.correctOnCleaning(item, remains);
         })
     }
 
